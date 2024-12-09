@@ -1,0 +1,6 @@
+.mypy_cache
+.venv
+__pycache__/
+.env
+.pytest_cache
+cert
