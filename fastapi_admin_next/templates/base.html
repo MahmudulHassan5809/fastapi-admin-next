@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI Admin</title>
+</head>
+<body>
+    <header>
+        <h1>FastAPI Admin</h1>
+        <nav>
+            <ul>
+                {% for model in models %}
+                <li><a href="/admin/{{ model.__name__ }}/list">{{ model.__name__ }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

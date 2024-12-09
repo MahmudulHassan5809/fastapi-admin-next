@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Admin Panel</h1>
+<ul>
+    {% for model in models %}
+    <li><a href="/admin/{{ model }}/list">{{ model }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
