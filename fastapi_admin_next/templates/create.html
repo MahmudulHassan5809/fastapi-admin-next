@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Create {{ model_name }}</h2>
+
+    <form method="post" action="/admin/{{ model_name }}/create" novalidate>
+        {% for column in columns %}
+            <div class="mb-3">
+                <label for="{{ column }}" class="form-label">{{ column | capitalize }}</label>
+    
+                {% set related_key = fk_to_rel_map.get(column) %}
+                {% if related_key and related_key in related_options %}
+                    <!-- Render dropdown for foreign key -->
+                    <select id="{{ column }}" name="{{ column }}" class="form-select" required>
+                        <option value="">Select {{ column | capitalize }}</option>
+                        {% for option in related_options[related_key] %}
+                            <option value="{{ option.id }}"
+                                    {% if form_data and form_data.get(column) == option.id %}selected{% endif %}>
+                                {{ option.label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                {% elif column in enum_fields %}
+                    <!-- Render dropdown for enum field -->
+                    <select id="{{ column }}" name="{{ column }}" class="form-select" required>
+                        <option value="">Select {{ column | capitalize }}</option>
+                        {% for value in enum_fields[column] %}
+                            <option value="{{ value }}"
+                                    {% if form_data and form_data.get(column) == value %}selected{% endif %}>
+                                {{ value }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                {% else %}
+                    <!-- Render input field for other columns -->
+                    <input type="text" id="{{ column }}" name="{{ column }}" class="form-control"
+                           value="{{ form_data[column] if form_data and column in form_data else '' }}" required>
+                {% endif %}
+    
+                <!-- Display error message for this field -->
+                {% if errors and column in errors %}
+                    <div class="text-danger mt-1">{{ errors[column] }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    
+
+    <a href="/admin/{{ model_name }}/list" class="btn btn-secondary mt-3">Back to List</a>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ model_name }} List</h2>
+    
+    <div class="mb-3">
+        <a href="/admin/{{ model_name }}/create" class="btn btn-primary">Create {{ model_name }}</a>
+    </div>
+
+    <form method="get" class="mb-4">
+        <div class="row">
+            {% for field, options in filter_options.items() %}
+                <div class="col-md-3 mb-3">
+                    <label for="{{ field }}" class="form-label">{{ field|capitalize }}:</label>
+                    <select name="{{ field }}" class="form-select">
+                        <option value="">All</option>
+                        {% for option in options %}
+                        <option value="{{ option.value }}">{{ option.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endfor %}
+            
+            <div class="col-md-3 mb-3">
+                <label for="search" class="form-label">Search:</label>
+                <input type="text" name="search" id="search" class="form-control" value="{{ query_params.search }}">
+            </div>
+
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                {% for column in columns %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                {% for column in columns %}
+                    <td>{{ row | getattr(column) }}</td>
+                {% endfor %}
+                <td>
+                    <a href="/admin/{{ model_name }}/update/{{ row.id }}" class="btn btn-sm btn-info">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <div class="page-links">
+            {% if query_params.page > 1 %}
+                <a href="{{ request.url_for('list_view', model_name=model_name) }}?page={{ query_params.page - 1 }}&page_size={{ query_params.page_size }}" class="btn btn-light">Previous</a>
+            {% endif %}
+
+            {% set total_pages = (total / query_params.page_size) | ceil_filter %}
+            {% set total_pages_int = total_pages | int %}
+            
+            <div class="btn-group">
+                {% for page_num in range(1, total_pages_int + 1) %}
+                    <a href="{{ request.url_for('list_view', model_name=model_name) }}?page={{ page_num }}&page_size={{ query_params.page_size }}" class="btn btn-light {% if page_num == query_params.page %}active{% endif %}">
+                        {{ page_num }}
+                    </a>
+                {% endfor %}
+            </div>
+
+            {% if query_params.page < total_pages_int %}
+                <a href="{{ request.url_for('list_view', model_name=model_name) }}?page={{ query_params.page + 1 }}&page_size={{ query_params.page_size }}" class="btn btn-light">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

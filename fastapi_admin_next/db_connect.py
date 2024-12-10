@@ -7,14 +7,16 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    """Base class for SQLAlchemy declarative models."""
 
 
 class DBConnector:
     _engine: AsyncEngine | None = None
-    _sessionmaker: async_sessionmaker | None = None
+    _sessionmaker: async_sessionmaker | None = None  # type: ignore
 
     @classmethod
     def register_db(cls, database_url: str) -> None:
@@ -43,7 +45,7 @@ class DBConnector:
             raise ValueError(
                 "Database is not registered. Call `DBConnector.register_db` first."
             )
-        async with cls._sessionmaker()() as session:  # pylint: disable=not-callable
+        async with cls._sessionmaker() as session:  # pylint: disable=not-callable
             yield session
 
     @classmethod

@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
+        "ilike",
+        "joinedload",
+        "notin",
         "sessionmaker"
     ]
 }

@@ -4,8 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FastAPI Admin</title>
+    
+    <!-- Include partial styles -->
+    {% include "partials/styles.html" %}
 </head>
 <body>
+    {% include "partials/navbar.html" %}
+
+    <div id="layoutSidenav">
+        {% include "partials/sidebar.html" %}
+        <div id="layoutSidenav_content">
+            <main>
+                {% block content %}
+                {% endblock content %}
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+
+
     <header>
         <h1>FastAPI Admin</h1>
         <nav>
@@ -17,8 +46,10 @@
         </nav>
     </header>
     <main>
-        {% block content %}
-        {% endblock %}
+        
     </main>
+
+    <!-- Include partial scripts -->
+    {% include "partials/scripts.html" %}
 </body>
 </html>
