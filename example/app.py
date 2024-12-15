@@ -19,6 +19,7 @@ from starlette.responses import JSONResponse
 
 from fastapi_admin_next.controllers import router as admin_router
 from fastapi_admin_next.db_connect import DBConnector
+from fastapi_admin_next.main import fastapi_admin_next_app
 from fastapi_admin_next.registry import registry
 
 
@@ -88,12 +89,15 @@ app = FastAPI(lifespan=lifespan)
 
 
 # Admin App Setup
+fastapi_admin_next_app.create_app(db_url=DATABASE_URL)
 registry.register(
-    User, filter_fields=["profile_type"], pydantic_validate_class=UserValidation
+    User,
+    filter_fields=["profile_type"],
+    search_fields=["name"],
+    pydantic_validate_class=UserValidation,
 )
 registry.register(Product, filter_fields=["user_id"], search_fields=["title"])
 
-# Include Admin Router
 app.include_router(admin_router)
 
 
