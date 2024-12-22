@@ -1,6 +1,4 @@
-Got it! Here's a revised README file that focuses on the main features and usage without the full example:
 
----
 
 # FastAPI Admin Next
 
