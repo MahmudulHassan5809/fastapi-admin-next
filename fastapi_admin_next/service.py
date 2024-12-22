@@ -2,7 +2,7 @@ from typing import Any
 
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
-from sqlalchemy import Enum, select
+from sqlalchemy import Enum, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.inspection import inspect
 
@@ -137,18 +137,28 @@ class AdminNextService:
         if not obj_to_update:
             return NotFoundResponse(message="Object not found")
 
-        relationships = inspect(model).relationships
+        # relationships = inspect(model).relationships
+        # related_data = {}
+        # for _, rel in relationships.items():
+        #     # Use the foreign key column name as the key
+        #     fk_column = list(rel.local_columns)[0].name
+        #     stmt = select(rel.mapper.class_)
+
+        #     related_rows = await db.execute(stmt)
+        #     related_data[fk_column] = [
+        #         (getattr(row, "id"), str(row)) for row in related_rows.scalars()
+        #     ]
+
+        # print(related_data, "-----")
+
         related_data = {}
-        for _, rel in relationships.items():
-            # Use the foreign key column name as the key
+        for _, rel in inspect(model).relationships.items():
+            related_result = await db.execute(text(f"SELECT * FROM {rel.target}"))
             fk_column = list(rel.local_columns)[0].name
-            stmt = select(rel.mapper.class_)
-            related_rows = await db.execute(stmt)
             related_data[fk_column] = [
-                (getattr(row, "id"), str(row)) for row in related_rows.scalars()
+                (row[0], str(row)) for row in related_result.fetchall()
             ]
 
-        # Get model columns excluding the primary key
         columns = [
             column.name for column in model.__table__.columns if column.name != "id"
         ]

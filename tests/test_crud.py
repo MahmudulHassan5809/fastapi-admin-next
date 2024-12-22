@@ -1,45 +1,24 @@
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import relationship
 
 from fastapi_admin_next.crud import CRUDGenerator
-from fastapi_admin_next.db_connect import Base
 
-
-class RelatedModel(Base):
-    __tablename__ = "related_model"
-    id = Column(Integer, primary_key=True)
-
-    def __str__(self) -> str:
-        return "RelatedModel"
-
-
-class MockModel(Base):
-    __tablename__ = "mock_model"
-    id = Column(Integer, primary_key=True)
-    related_field_id = Column(Integer, ForeignKey("related_model.id"))
-    related_field = relationship("RelatedModel")
+from .utils import MockModel, RelatedModel
 
 
 @pytest.mark.asyncio
 async def test_get_related_options() -> None:
-
     mock_session = AsyncMock(spec=AsyncSession)
+    related_instance = RelatedModel(id=1)
     mock_query_result = MagicMock()
-    mock_query_result.scalars().all.return_value = [RelatedModel(id=1)]
+    mock_query_result.scalars().all.return_value = [related_instance]
     mock_session.execute.return_value = mock_query_result
     crud_generator = CRUDGenerator(MockModel, mock_session)
-
     result = await crud_generator.get_related_options(MockModel)  # type: ignore
-
-    # Assertions
-    assert "related_field" in result
-    assert result["related_field"] == [{"id": 1, "label": "RelatedModel"}]
-
-    # Verify session execution
+    assert "related" in result
+    assert result["related"] == [{"id": 1, "label": "RelatedModel"}]
     mock_session.execute.assert_called_once()
     mock_query_result.scalars().all.assert_called_once()
 
@@ -49,10 +28,10 @@ async def test_get_query() -> None:
     mock_session = AsyncMock(spec=AsyncSession)
     crud_generator = CRUDGenerator(MockModel, mock_session)
     query = crud_generator._get_query(  # pylint: disable=protected-access
-        prefetch=("related_field",)
+        prefetch=("related",)
     )
     assert "SELECT" in str(query), "Query should include SELECT statement"
-    assert "related_field" in str(query), "Query should include prefetch field"
+    assert "related" in str(query), "Query should include prefetch field"
 
 
 @pytest.mark.asyncio

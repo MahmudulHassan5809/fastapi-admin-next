@@ -4,3 +4,4 @@ __pycache__/
 .env
 .pytest_cache
 cert
+user_database.db

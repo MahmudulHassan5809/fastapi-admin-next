@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FastAPI Admin</title>
-    
+
     <!-- Include partial styles -->
     {% include "partials/styles.html" %}
 </head>
@@ -35,19 +35,7 @@
 
 
 
-    <header>
-        <h1>FastAPI Admin</h1>
-        <nav>
-            <ul>
-                {% for model in models %}
-                <li><a href="/admin/{{ model.__name__ }}/list">{{ model.__name__ }}</a></li>
-                {% endfor %}
-            </ul>
-        </nav>
-    </header>
-    <main>
-        
-    </main>
+
 
     <!-- Include partial scripts -->
     {% include "partials/scripts.html" %}

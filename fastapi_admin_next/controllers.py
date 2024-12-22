@@ -10,7 +10,7 @@ from fastapi_admin_next.exceptions import ValidationException
 from fastapi_admin_next.schemas import NotFoundResponse
 from fastapi_admin_next.service import AdminNextService
 
-router = APIRouter(prefix="/admin")
+router = APIRouter(prefix="")
 
 
 service = AdminNextService()

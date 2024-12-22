@@ -1,9 +1,12 @@
 """Fast Api module"""
 
 import os
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
+
 from fastapi_admin_next.controllers import router
 from fastapi_admin_next.db_connect import DBConnector
 
@@ -33,11 +36,12 @@ class FastAPIAdminNextApp:
         DBConnector.register_db(db_url)
         static_dir = os.path.join(os.path.dirname(__file__), "static")
         self.app.mount(
-            "/admin/static",
+            "/static",
             StaticFiles(directory=static_dir, html=True),
             name="static",
         )
         self.init_routers()
+        self.app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
         return self.app
 
 

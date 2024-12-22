@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="mb-4">Update {{ model_name }}</h2>
-    <form method="POST" action="/admin/{{ model_name }}/update/{{ row.id }}">
+    <form method="POST" action="/admin/{{ model_name }}/update/{{ row.id }}" autocomplete="off">
         {% for column in columns %}
             <div class="mb-3">
                 <label for="{{ column }}" class="form-label">{{ column | capitalize }}</label>
@@ -32,11 +32,11 @@
                     </select>
                 {% else %}
                     <!-- Input for other columns -->
-                    <input 
-                        type="text" 
-                        id="{{ column }}" 
-                        name="{{ column }}" 
-                        value="{{ row | getattr(column) }}" 
+                    <input
+                        type="text"
+                        id="{{ column }}"
+                        name="{{ column }}"
+                        value="{{ row | getattr(column) }}"
                         class="form-control"
                         {% if column == "id" %}readonly{% endif %}>
                 {% endif %}
