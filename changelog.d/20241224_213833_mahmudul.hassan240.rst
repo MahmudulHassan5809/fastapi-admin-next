@@ -1,0 +1,7 @@
+### Added
+-----
+- Support for dynamic generation of Pydantic models from SQLAlchemy models if no custom Pydantic model is provided.
+- Ability to register SQLAlchemy models easily for streamlined integration.
+- New filter fields functionality for enhanced querying capabilities.
+- Search fields support to enable flexible search options on models.
+- Integration with Pydantic for validation, ensuring robust data handling.

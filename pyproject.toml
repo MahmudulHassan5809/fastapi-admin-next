@@ -24,6 +24,7 @@ pylint = "^3.3.2"
 flake8 = "^7.1.1"
 pytest = "^8.3.4"
 pytest-asyncio = "^0.25.0"
+scriv = {extras = ["toml"], version = "^1.5.1"}
 
 [build-system]
 requires = ["poetry-core"]

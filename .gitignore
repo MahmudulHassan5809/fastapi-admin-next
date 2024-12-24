@@ -5,3 +5,4 @@ __pycache__/
 .pytest_cache
 cert
 user_database.db
+dist

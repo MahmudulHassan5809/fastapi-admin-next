@@ -16,15 +16,9 @@ FastAPI Admin Next is a package for managing admin interfaces in FastAPI applica
 
 To install the project, follow these steps:
 
-1. **Clone the repository**:
+1. **Install**:
     ```bash
-    git clone https://github.com/MahmudulHassan5809/fastapi-admin-next.git
-    cd fastapi-admin-next
-    ```
-
-2. **Install dependencies**:
-    ```bash
-    poetry install
+    pip install fastapi_admin_next
     ```
 
 
