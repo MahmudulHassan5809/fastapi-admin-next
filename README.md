@@ -10,6 +10,7 @@ FastAPI Admin Next is a package for managing admin interfaces in FastAPI applica
 - **Filter Fields**: Add filter fields to your models.
 - **Search Fields**: Add search fields to your models.
 - **Pydantic Validation**: Use Pydantic validation classes for your models. If not provided, Pydantic models are generated dynamically from SQLAlchemy models.
+- **User Authentication**: Admin user authentication
 - **Future Plans**: Manage permissions using Redis and add a reporting dashboard.
 
 ## Installation
