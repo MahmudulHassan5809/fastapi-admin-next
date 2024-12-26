@@ -5,7 +5,8 @@ description = ""
 authors = ["MahmudulHassan5809 <mahmudul.hassan240@gmail.com>"]
 readme = "README.md"
 
-
+[tool.scriv]
+changelog = "changelog.d"
 
 [tool.poetry.dependencies]
 python = "^3.12"
