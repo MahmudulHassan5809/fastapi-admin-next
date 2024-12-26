@@ -33,7 +33,7 @@
                 {% else %}
                     <!-- Input for other columns -->
                     <input
-                        type="text"
+                        type="{{ 'password' if 'password' in column else 'text' }}"
                         id="{{ column }}"
                         name="{{ column }}"
                         value="{{ row | getattr(column) }}"

@@ -17,6 +17,7 @@ from fastapi_admin_next.schemas import (
     SaveForm,
 )
 from fastapi_admin_next.security import PasswordHandler
+from fastapi_admin_next.configs import AuthConfigManager
 
 from .base import BaseService
 
@@ -189,11 +190,24 @@ class AdminNextService(BaseService):
     ) -> SaveForm:
         try:
             validated_data = self.registry.get_pydantic_model(model)(**data_dict)
+            data_dict = validated_data.model_dump()
             id = obj_id  # pylint: disable=redefined-builtin
             obj = await db.get(model, id)
             if not obj:
                 return SaveForm(errors={"id": "Object not found"})
-            for key, value in validated_data.model_dump().items():
+
+            auth_config = AuthConfigManager.get_auth_config()
+            if data_dict.get(auth_config.password_field):
+                if data_dict.get(auth_config.password_field) != getattr(
+                    obj, auth_config.password_field
+                ):
+                    data_dict[auth_config.password_field] = PasswordHandler.hash(
+                        data_dict[auth_config.password_field]
+                    )
+                else:
+                    data_dict.pop(auth_config.password_field)
+
+            for key, value in data_dict.items():
                 setattr(obj, key, value)
             await db.commit()
             return SaveForm(errors=None)
