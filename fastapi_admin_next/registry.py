@@ -19,12 +19,14 @@ class ModelRegistry:
         self._pydantic_models: dict[type[Base], type[BaseModel]] = {}
         self._filter_fields: dict[Any, Any] = {}
         self._search_fields: dict[Any, Any] = {}
+        self._display_fields: dict[Any, Any] = {}
 
     def register(
         self,
         model: type[Base],
         filter_fields: list[str] | None = None,
         search_fields: list[str] | None = None,
+        display_fields: list[str] | None = None,
         pydantic_validate_class: BaseModel | None = None,
     ) -> None:
         """
@@ -34,11 +36,14 @@ class ModelRegistry:
             filter_fields = []
         if search_fields is None:
             search_fields = []
+        if display_fields is None:
+            display_fields = []
 
         if model not in self._models:
             self._models.append(model)
             self._filter_fields[model] = filter_fields
             self._search_fields[model] = search_fields
+            self._display_fields[model] = display_fields
             self._pydantic_models[model] = (
                 pydantic_validate_class
                 if pydantic_validate_class
@@ -68,6 +73,12 @@ class ModelRegistry:
         Get the search fields for a model.
         """
         return self._search_fields.get(model, [])  # type: ignore
+
+    def get_display_fields(self, model: type[Base]) -> list[str]:
+        """
+        Get the display fields for a model.
+        """
+        return self._display_fields.get(model, [])
 
     def get_pydantic_model(self, model: type[Base]) -> type[BaseModel]:
         """

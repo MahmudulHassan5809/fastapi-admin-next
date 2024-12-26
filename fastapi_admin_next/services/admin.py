@@ -5,6 +5,7 @@ from sqlalchemy import Enum, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.inspection import inspect
 
+from fastapi_admin_next.configs import AuthConfigManager
 from fastapi_admin_next.crud import CRUDGenerator
 from fastapi_admin_next.db_connect import Base
 from fastapi_admin_next.schemas import (
@@ -17,7 +18,6 @@ from fastapi_admin_next.schemas import (
     SaveForm,
 )
 from fastapi_admin_next.security import PasswordHandler
-from fastapi_admin_next.configs import AuthConfigManager
 
 from .base import BaseService
 
@@ -55,7 +55,12 @@ class AdminNextService(BaseService):
             ),
         )
 
-        columns = [column.name for column in model.__table__.columns]
+        display_fields = self.registry.get_display_fields(model)
+        columns = (
+            display_fields
+            if display_fields
+            else [column.name for column in model.__table__.columns]
+        )
 
         return ListResponse(
             rows=rows,

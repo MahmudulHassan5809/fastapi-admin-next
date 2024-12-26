@@ -93,6 +93,7 @@ registry.register(
     User,
     filter_fields=["profile_type"],
     search_fields=["name"],
+    display_fields=["name", "email", "profile_type"],
     pydantic_validate_class=UserValidation,
 )
 registry.register(Product, filter_fields=["user_id"], search_fields=["title"])
