@@ -14,7 +14,7 @@ from fastapi_admin_next.schemas import (
     QueryParams,
     SaveForm,
 )
-from fastapi_admin_next.service import AdminNextService
+from fastapi_admin_next.services import AdminNextService
 
 from .utils import MockModel, RelatedModel
 

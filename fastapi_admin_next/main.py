@@ -4,14 +4,19 @@ import os
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
-from fastapi_admin_next.controllers import router
+from fastapi_admin_next.configs import AuthConfig, AuthConfigManager
 from fastapi_admin_next.db_connect import DBConnector
+from fastapi_admin_next.middleware import ExceptionRedirectMiddleware
+from fastapi_admin_next.router import app_router as router
+from fastapi_admin_next.security import JWTCookieBackend
 
 
 class FastAPIAdminNextApp:
+
     def __init__(self) -> None:
         self.app = FastAPI(
             title="FastAPI Admin Next",
@@ -32,7 +37,8 @@ class FastAPIAdminNextApp:
     def init_routers(self) -> None:
         self.app.include_router(router)
 
-    def create_app(self, db_url: str) -> FastAPI:
+    def create_app(self, db_url: str, auth_config: AuthConfig) -> FastAPI:
+        AuthConfigManager.set_auth_config(auth_config)
         DBConnector.register_db(db_url)
         static_dir = os.path.join(os.path.dirname(__file__), "static")
         self.app.mount(
@@ -41,7 +47,11 @@ class FastAPIAdminNextApp:
             name="static",
         )
         self.init_routers()
+
+        self.app.add_middleware(ExceptionRedirectMiddleware)
+
         self.app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
+        self.app.add_middleware(AuthenticationMiddleware, backend=JWTCookieBackend())
         return self.app
 
 

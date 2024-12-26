@@ -45,6 +45,12 @@ class ModelRegistry:
                 else generate_pydantic_model(model)  # type: ignore
             )
 
+    def get_model(self, model: type[Base]) -> type[Base]:
+        """
+        Get a registered SQLAlchemy model.
+        """
+        return self._models[self._models.index(model)]
+
     def get_models(self) -> list[type[Base]]:
         """
         Get a list of all registered SQLAlchemy models.

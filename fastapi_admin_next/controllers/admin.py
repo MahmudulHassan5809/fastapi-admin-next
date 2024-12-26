@@ -8,7 +8,7 @@ from fastapi_admin_next.db_connect import DBConnector
 from fastapi_admin_next.dependencies import CommonQueryParam
 from fastapi_admin_next.exceptions import ValidationException
 from fastapi_admin_next.schemas import NotFoundResponse
-from fastapi_admin_next.service import AdminNextService
+from fastapi_admin_next.services import AdminNextService
 
 router = APIRouter(prefix="")
 

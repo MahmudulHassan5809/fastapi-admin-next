@@ -6,3 +6,4 @@ __pycache__/
 cert
 user_database.db
 dist
+note.txt

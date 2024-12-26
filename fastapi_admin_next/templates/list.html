@@ -3,9 +3,9 @@
 {% block content %}
 <div class="container mt-4">
     <h2>{{ model_name }} List</h2>
-    
+
     <div class="mb-3">
-        <a href="/admin/{{ model_name }}/create" class="btn btn-primary">Create {{ model_name }}</a>
+        <a href="/admin/apps/{{ model_name }}/create" class="btn btn-primary">Create {{ model_name }}</a>
     </div>
 
     <form method="get" class="mb-4">
@@ -21,7 +21,7 @@
                     </select>
                 </div>
             {% endfor %}
-            
+
             <div class="col-md-3 mb-3">
                 <label for="search" class="form-label">Search:</label>
                 <input type="text" name="search" id="search" class="form-control" value="{{ query_params.search }}">
@@ -49,7 +49,7 @@
                     <td>{{ row | getattr(column) }}</td>
                 {% endfor %}
                 <td>
-                    <a href="/admin/{{ model_name }}/update/{{ row.id }}" class="btn btn-sm btn-info">View</a>
+                    <a href="/admin/apps/{{ model_name }}/update/{{ row.id }}" class="btn btn-sm btn-info">View</a>
                 </td>
             </tr>
             {% endfor %}
@@ -65,7 +65,7 @@
 
             {% set total_pages = (total / query_params.page_size) | ceil_filter %}
             {% set total_pages_int = total_pages | int %}
-            
+
             <div class="btn-group">
                 {% for page_num in range(1, total_pages_int + 1) %}
                     <a href="{{ request.url_for('list_view', model_name=model_name) }}?page={{ page_num }}&page_size={{ query_params.page_size }}" class="btn btn-light {% if page_num == query_params.page %}active{% endif %}">

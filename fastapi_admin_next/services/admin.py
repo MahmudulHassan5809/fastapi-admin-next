@@ -1,6 +1,5 @@
 from typing import Any
 
-from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 from sqlalchemy import Enum, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,8 +7,6 @@ from sqlalchemy.inspection import inspect
 
 from fastapi_admin_next.crud import CRUDGenerator
 from fastapi_admin_next.db_connect import Base
-from fastapi_admin_next.jinja_filters import ceil_filter, getattr_filter
-from fastapi_admin_next.registry import registry
 from fastapi_admin_next.schemas import (
     CreateForm,
     DetailResponse,
@@ -19,15 +16,12 @@ from fastapi_admin_next.schemas import (
     QueryParams,
     SaveForm,
 )
+from fastapi_admin_next.security import PasswordHandler
+
+from .base import BaseService
 
 
-class AdminNextService:
-    def __init__(self) -> None:
-        templates_directory = "fastapi_admin_next/templates"
-        self.templates = Jinja2Templates(directory=templates_directory)
-        self.templates.env.filters["getattr"] = getattr_filter
-        self.templates.env.filters["ceil_filter"] = ceil_filter
-        self.registry = registry
+class AdminNextService(BaseService):
 
     def get_models(self) -> list[str]:
         return [model.__name__ for model in self.registry.get_models()]
@@ -116,7 +110,16 @@ class AdminNextService:
     ) -> SaveForm:
 
         try:
-            validated_data = self.registry.get_pydantic_model(model)(**data_dict)
+            processed_data = {
+                key: (
+                    PasswordHandler.hash(value)
+                    if "password" in key.lower() and isinstance(value, str)
+                    else value
+                )
+                for key, value in data_dict.items()
+            }
+
+            validated_data = self.registry.get_pydantic_model(model)(**processed_data)
             obj = model(**validated_data.model_dump())
             db.add(obj)
             await db.commit()

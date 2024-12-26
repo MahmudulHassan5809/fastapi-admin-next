@@ -173,6 +173,21 @@ class CRUDGenerator(Generic[ModelType]):
         result = result_cursor.scalars().first()
         return result
 
+    async def get_by_field(
+        self,
+        filters: dict[str, Any],
+        sorting: dict[str, str] | None = None,
+        prefetch: tuple[str, ...] | None = None,
+    ) -> ModelType | None:
+        query = self._get_query(prefetch)
+        if sorting is not None:
+            query = query.order_by(*self._build_sorting(sorting))
+        result_cursor = await self.session.execute(
+            query.where(and_(True, *self._build_filters(filters)))
+        )
+        result = result_cursor.scalars().first()
+        return result
+
     async def create(self, db: AsyncSession, obj_data: dict[str, Any]) -> ModelType:
         obj = self.model(**obj_data)
         db.add(obj)

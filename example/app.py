@@ -10,6 +10,7 @@ from sqlalchemy import Column, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, relationship
 
+from fastapi_admin_next.configs import AuthConfig
 from fastapi_admin_next.main import fastapi_admin_next_app
 from fastapi_admin_next.registry import registry
 
@@ -36,6 +37,7 @@ class User(Base):
     profile_type = Column(
         Enum(ProfileType, values_callable=get_enum_values), nullable=True
     )
+    password = Column(String, nullable=False)
     products = relationship("Product", back_populates="user")
 
     def __str__(self):
@@ -54,6 +56,7 @@ class Product(Base):
 class UserValidation(BaseModel):
     name: str
     email: EmailStr
+    password: str
     profile_type: ProfileType
 
 
@@ -74,7 +77,18 @@ app = FastAPI(lifespan=lifespan)
 
 
 # Admin App Setup
-admin_app = fastapi_admin_next_app.create_app(db_url=DATABASE_URL)
+admin_app = fastapi_admin_next_app.create_app(
+    db_url=DATABASE_URL,
+    auth_config=AuthConfig(
+        auth_model=User,
+        auth_username_field="email",
+        password_field="password",
+        secret_key="your-secret-key",
+        algorithm="HS256",
+        token_expiry_minutes=30,
+        cookie_name="auth_token",
+    ),
+)
 registry.register(
     User,
     filter_fields=["profile_type"],
