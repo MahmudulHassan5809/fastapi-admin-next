@@ -1,6 +1,7 @@
 from typing import Any
 
 from pydantic import BaseModel
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.inspection import inspect
 
@@ -118,9 +119,9 @@ class ModelRegistry:
             if related_model is None:
                 raise ValueError(f"Could not find ORM model for table {related_table}")
 
-            result = await db_session.execute(related_model.__table__.select())
-            related_objects = result.all()
-            return [{"value": obj.id, "label": obj} for obj in related_objects]
+            result = await db_session.execute(select(related_model))
+            related_objects = result.scalars().all()
+            return [{"value": obj.id, "label": str(obj)} for obj in related_objects]
         if hasattr(column.type, "enums"):
             return [{"value": value, "label": value} for value in column.type.enums]
 

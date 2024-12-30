@@ -52,6 +52,9 @@ class Product(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user = relationship("User", back_populates="products")
 
+    def __str__(self):
+        return f"{self.title} ({self.price})"
+
 
 class UserValidation(BaseModel):
     name: str

@@ -1,7 +1,7 @@
 from typing import Any
 
 from pydantic import ValidationError
-from sqlalchemy import Enum, select, text
+from sqlalchemy import Enum, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.inspection import inspect
 
@@ -178,10 +178,11 @@ class AdminNextService(BaseService):
 
         related_data = {}
         for _, rel in inspect(model).relationships.items():
-            related_result = await db.execute(text(f"SELECT * FROM {rel.target}"))
+            related_model = rel.mapper.class_
+            related_result = await db.execute(select(related_model))
             fk_column = list(rel.local_columns)[0].name
             related_data[fk_column] = [
-                (row[0], str(row)) for row in related_result.fetchall()
+                (obj.id, str(obj)) for obj in related_result.scalars().all()
             ]
 
         columns = [
