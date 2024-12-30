@@ -2,10 +2,10 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>{{ model_name }} List</h2>
+    <h2>{{  model_name | lower }} List</h2>
 
     <div class="mb-3">
-        <a href="/admin/apps/{{ model_name }}/create" class="btn btn-primary">Create {{ model_name }}</a>
+        <a href="/admin/apps/{{  model_name | lower }}/create" class="btn btn-primary">Create {{  model_name | lower }}</a>
     </div>
 
     <form method="get" class="mb-4">
@@ -24,7 +24,17 @@
 
             <div class="col-md-3 mb-3">
                 <label for="search" class="form-label">Search:</label>
-                <input type="text" name="search" id="search" class="form-control" value="{{ query_params.search }}">
+                <input type="text" name="search" id="search" class="form-control" value="{{ query_params.search or '' }}">
+            </div>
+
+            <!-- New Option for Fetching Related Data -->
+            <div class="col-md-3 mb-3">
+                <label for="related" class="form-label">Include Related Data:</label>
+                <div class="form-check">
+                    <input type="checkbox" name="fetch_related_data" id="related" class="form-check-input" value="true"
+                    {% if query_params.related %}checked{% endif %}>
+                    <label for="related" class="form-check-label">Fetch Related</label>
+                </div>
             </div>
 
             <div class="col-md-3 mb-3 d-flex align-items-end">
@@ -32,6 +42,7 @@
             </div>
         </div>
     </form>
+
 
     <table class="table table-bordered table-striped">
         <thead>
@@ -46,15 +57,29 @@
             {% for row in rows %}
             <tr>
                 {% for column in columns %}
-                    <td>{{ row | getattr(column) }}</td>
+                    <td>
+                        {% if column in fk_to_rel_map %}
+                            {% if fetch_related_data %}
+                                {# Link to related object's page if data is fetched #}
+                                <a target="_blank" href="/admin/apps/{{ fk_to_rel_map[column] }}/update/{{ row[fk_to_rel_map[column]].id }}">
+                                    {{ row[fk_to_rel_map[column]] if row[fk_to_rel_map[column]] else row[column] }}
+                                </a>
+                            {% else %}
+                                {{ row[column] }}  <!-- Show foreign key ID -->
+                            {% endif %}
+                        {% else %}
+                            {{ row[column] }}
+                        {% endif %}
+                    </td>
                 {% endfor %}
                 <td>
-                    <a href="/admin/apps/{{ model_name }}/update/{{ row.id }}" class="btn btn-sm btn-info">View</a>
+                    <a href="/admin/apps/{{  model_name | lower }}/update/{{ row.id }}" class="btn btn-sm btn-info">View</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
 
     <!-- Pagination Controls -->
     <div class="d-flex justify-content-between align-items-center mt-4">

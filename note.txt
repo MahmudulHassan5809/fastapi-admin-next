@@ -1,4 +1,0 @@
-Release 2
-    project folder restructure -> Done
-    Authentications add -> Done
-    new option add as display fields -> Done

@@ -5,7 +5,7 @@
 <ul>
 
     {% for model in models %}
-    <li><a href="/admin/apps/{{ model }}/list">{{ model }}</a></li>
+    <li><a href="/admin/apps/{{  model | lower  }}/list">{{ model }}</a></li>
     {% endfor %}
 </ul>
 {% endblock %}

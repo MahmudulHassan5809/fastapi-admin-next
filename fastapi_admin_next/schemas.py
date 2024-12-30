@@ -27,6 +27,7 @@ class QueryParams(BaseModel):
     search_fields: list[str] | None = None
     filter_params: dict[str, Any] | None = None
     sorting: dict[str, str] | None = None
+    fetch_related_data: str | None = None
 
     @property
     def skip(self) -> int:
@@ -38,6 +39,7 @@ class FilterOptions(BaseModel):
     query_params: QueryParams | None = None
     prefetch: tuple[str, ...] | None = None
     use_or: bool = False
+
     distinct_on: str | None = None
 
 
@@ -47,7 +49,7 @@ class ListResponse(BaseModel, Generic[T]):
     columns: list[str]
     filter_options: dict[str, Any]
     models: list[str]
-
+    fk_to_rel_map: dict[str, Any]
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
 

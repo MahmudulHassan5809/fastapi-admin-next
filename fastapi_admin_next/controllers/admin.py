@@ -30,8 +30,10 @@ async def list_view(
     model_name: str,
     db: AsyncSession = Depends(DBConnector.dependency()),
 ) -> Any:
+    model_name = model_name.title()
     model = next(
-        (m for m in service.registry.get_models() if m.__name__ == model_name), None
+        (m for m in service.registry.get_models() if m.__name__ == model_name),
+        None,
     )
     if not model:
         raise ValidationException(message="Model not found")
@@ -54,6 +56,8 @@ async def list_view(
             "query_params": query_params,
             "total": response.total,
             "models": response.models,
+            "fk_to_rel_map": response.fk_to_rel_map,
+            "fetch_related_data": query_params.fetch_related_data == "true",
         },
     )
 
@@ -64,8 +68,10 @@ async def create_form(
     model_name: str,
     db: AsyncSession = Depends(DBConnector.dependency()),
 ) -> Any:
+    model_name = model_name.title()
     model = next(
-        (m for m in service.registry.get_models() if m.__name__ == model_name), None
+        (m for m in service.registry.get_models() if m.__name__ == model_name),
+        None,
     )
     if not model:
         return HTMLResponse(content="Model not found", status_code=404)
@@ -101,8 +107,10 @@ async def create_action(
     db: AsyncSession = Depends(DBConnector.dependency()),
 ) -> Any:
     # Fetch the model from the registry
+    model_name = model_name.title()
     model = next(
-        (m for m in service.registry.get_models() if m.__name__ == model_name), None
+        (m for m in service.registry.get_models() if m.__name__ == model_name),
+        None,
     )
     if not model:
         return HTMLResponse(content="Model not found", status_code=404)
@@ -129,8 +137,10 @@ async def update_form(
     obj_id: str,
     db: AsyncSession = Depends(DBConnector.dependency()),
 ) -> Any:
+    model_name = model_name.title()
     model = next(
-        (m for m in service.registry.get_models() if m.__name__ == model_name), None
+        (m for m in service.registry.get_models() if m.__name__ == model_name),
+        None,
     )
     if not model:
         return HTMLResponse(content="Model not found", status_code=404)
@@ -165,8 +175,10 @@ async def update_action(
     obj_id: int,
     db: AsyncSession = Depends(DBConnector.dependency()),
 ) -> Any:
+    model_name = model_name.title()
     model = next(
-        (m for m in service.registry.get_models() if m.__name__ == model_name), None
+        (m for m in service.registry.get_models() if m.__name__ == model_name),
+        None,
     )
     if not model:
         return HTMLResponse(content="Model not found", status_code=404)

@@ -78,7 +78,7 @@ class ModelRegistry:
         """
         Get the display fields for a model.
         """
-        return self._display_fields.get(model, [])
+        return self._display_fields.get(model, [])  # type: ignore
 
     def get_pydantic_model(self, model: type[Base]) -> type[BaseModel]:
         """

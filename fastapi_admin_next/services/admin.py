@@ -47,11 +47,26 @@ class AdminNextService(BaseService):
 
         crud: CRUDGenerator[Base] = CRUDGenerator(model=model, session=db)
 
+        inspector = inspect(model)
+        relationships = inspector.relationships
+
+        fk_to_rel_map = {
+            fk.name: rel.key
+            for rel in relationships.values()
+            if not rel.uselist  # Only include single relationships
+            for fk in rel._calculated_foreign_keys  # pylint: disable=protected-access
+        }
+
         rows, total = await crud.paginate_filter(
             filter_options=FilterOptions(
                 filters=filters,
                 query_params=query_params,
                 sorting=query_params.sorting,
+                prefetch=(
+                    fk_to_rel_map.values()
+                    if query_params.fetch_related_data == "true" and fk_to_rel_map
+                    else None
+                ),
             ),
         )
 
@@ -67,6 +82,7 @@ class AdminNextService(BaseService):
             total=total,
             columns=columns,
             filter_options=filter_options,
+            fk_to_rel_map=fk_to_rel_map,
             models=self.get_models(),
         )
 

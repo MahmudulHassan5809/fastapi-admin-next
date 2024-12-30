@@ -13,6 +13,7 @@ class CommonQueryParam:
         search = query_params.get("search")
         page = int(query_params.get("page", 1))
         page_size = int(query_params.get("page_size", 10))
+        fetch_related_data = query_params.get("fetch_related_data")
 
         # Filter and clean additional query parameters
         filter_params = {
@@ -25,5 +26,6 @@ class CommonQueryParam:
             search=search,
             page=page,
             page_size=page_size,
+            fetch_related_data=fetch_related_data,
             filter_params=filter_params,
         )

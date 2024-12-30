@@ -16,7 +16,7 @@
                 <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
                         {% for model in models %}
-                            <a class="nav-link" href="/admin/apps/{{ model }}/list">{{ model}}</a>
+                            <a class="nav-link" href="/admin/apps/{{ model | lower }}/list">{{ model}}</a>
                         {% endfor %}
                     </nav>
                 </div>

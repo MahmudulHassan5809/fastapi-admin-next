@@ -33,7 +33,7 @@ class JWTCookieBackend(AuthenticationBackend):
         return data
 
     async def authenticate(  # pylint: disable=arguments-renamed
-        self, request: Request  # type: ignore
+        self, request: Request
     ) -> tuple[AuthCredentials, SimpleUser | UnauthenticatedUser]:
 
         auth_token: str = request.cookies.get("auth_token", "")
